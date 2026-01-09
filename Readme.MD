@@ -1,3 +1,5 @@
+![](Diagrams/Architecture/architecture full.png)
+
 # 🚀 Azure End-to-End Data Engineering Project
 
 ## Medallion Architecture with ADF, Databricks & ADLS Gen2
@@ -28,7 +30,6 @@ High-level architecture:
 5. Delta Lake tables
 6. GitHub-integrated CI-style workflow
 
-📸 *Insert architecture diagram here*
 
 ### 🧱 Medallion Architecture Design
 
