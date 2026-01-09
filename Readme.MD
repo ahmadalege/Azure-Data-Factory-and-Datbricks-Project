@@ -1,4 +1,4 @@
-![](Diagrams/Architecture/architecture full.png)
+![](Diagrams/Architecture/architecture.png)
 
 # 🚀 Azure End-to-End Data Engineering Project
 
