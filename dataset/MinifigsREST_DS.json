@@ -1,0 +1,16 @@
+{
+	"name": "MinifigsREST_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RebrickableREST_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "/api/v3/lego/minifigs/"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

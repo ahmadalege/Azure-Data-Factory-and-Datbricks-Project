@@ -1,0 +1,21 @@
+{
+	"name": "dimCustomerGOld",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RebrickableADLSg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "dvd_rentals/dim_customer",
+				"fileSystem": "gold"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

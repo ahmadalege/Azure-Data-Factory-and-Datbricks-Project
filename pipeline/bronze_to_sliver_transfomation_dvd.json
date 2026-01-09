@@ -1,0 +1,35 @@
+{
+	"name": "bronze_to_sliver_transfomation_dvd",
+	"properties": {
+		"description": "This pipeline will transform our DVD rentals in the bronze layer to the silver layer in the medallion architecture ",
+		"activities": [
+			{
+				"name": "df_silver_dvd_rentals_core",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "customer_df",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-01-07T15:46:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,48 @@
+{
+	"name": "paymentSilver",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RebrickableADLSg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "dvd_rentals/payment",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "payment_id",
+				"type": "INT32"
+			},
+			{
+				"name": "customer_id",
+				"type": "INT32"
+			},
+			{
+				"name": "staff_id",
+				"type": "INT32"
+			},
+			{
+				"name": "rental_id",
+				"type": "INT32"
+			},
+			{
+				"name": "amount",
+				"type": "DECIMAL",
+				"precision": 2,
+				"scale": 2
+			},
+			{
+				"name": "payment_date",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

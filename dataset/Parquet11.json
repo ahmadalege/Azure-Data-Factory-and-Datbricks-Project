@@ -1,0 +1,38 @@
+{
+	"name": "Parquet11",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RebrickableADLSg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "dvd_rentals/inventory",
+				"fileSystem": "bronze"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "inventory_id",
+				"type": "INT32"
+			},
+			{
+				"name": "film_id",
+				"type": "INT32"
+			},
+			{
+				"name": "store_id",
+				"type": "INT32"
+			},
+			{
+				"name": "last_update",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

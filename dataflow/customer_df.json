@@ -1,0 +1,284 @@
+{
+	"name": "customer_df",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Parquet2",
+						"type": "DatasetReference"
+					},
+					"name": "Customer1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet3",
+						"type": "DatasetReference"
+					},
+					"name": "filmBronze"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet5",
+						"type": "DatasetReference"
+					},
+					"name": "rental"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet7",
+						"type": "DatasetReference"
+					},
+					"name": "payment"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet11",
+						"type": "DatasetReference"
+					},
+					"name": "inventory"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ADLSg2",
+						"type": "DatasetReference"
+					},
+					"name": "customer"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet4",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet6",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet8",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
+				},
+				{
+					"dataset": {
+						"referenceName": "Parquet12",
+						"type": "DatasetReference"
+					},
+					"name": "sink5"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "finalselect"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "select5"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as integer,",
+				"          store_id as integer,",
+				"          first_name as string,",
+				"          last_name as string,",
+				"          email as string,",
+				"          address_id as integer,",
+				"          activebool as boolean,",
+				"          create_date as timestamp,",
+				"          last_update as timestamp,",
+				"          active as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> Customer1",
+				"source(output(",
+				"          film_id as integer,",
+				"          title as string,",
+				"          description as string,",
+				"          release_year as integer,",
+				"          language_id as integer,",
+				"          original_language_id as integer,",
+				"          rental_duration as integer,",
+				"          rental_rate as decimal(38,18),",
+				"          length as integer,",
+				"          replacement_cost as decimal(38,18),",
+				"          rating as string,",
+				"          last_update as timestamp,",
+				"          special_features as string,",
+				"          fulltext as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> filmBronze",
+				"source(output(",
+				"          rental_id as integer,",
+				"          rental_date as timestamp,",
+				"          inventory_id as integer,",
+				"          customer_id as integer,",
+				"          return_date as timestamp,",
+				"          staff_id as integer,",
+				"          last_update as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> rental",
+				"source(output(",
+				"          payment_id as integer,",
+				"          customer_id as integer,",
+				"          staff_id as integer,",
+				"          rental_id as integer,",
+				"          amount as decimal(38,18),",
+				"          payment_date as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> payment",
+				"source(output(",
+				"          inventory_id as integer,",
+				"          film_id as integer,",
+				"          store_id as integer,",
+				"          last_update as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> inventory",
+				"Customer1 derive(email = lower(email),",
+				"          first_name = trim(first_name),",
+				"          last_name = trim(last_name)) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          customer_id,",
+				"          store_id,",
+				"          first_name,",
+				"          last_name,",
+				"          email,",
+				"          address_id,",
+				"          active = activebool,",
+				"          created_date_ts = create_date,",
+				"          last_updated_date_ts = last_update",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> finalselect",
+				"filmBronze derive(title = trim(title),",
+				"          description = trim(description),",
+				"          rating = trim(rating)) ~> derivedColumn2",
+				"derivedColumn2 select(mapColumn(",
+				"          film_id,",
+				"          title,",
+				"          description,",
+				"          release_year,",
+				"          language_id,",
+				"          rental_duration,",
+				"          rental_rate,",
+				"          length,",
+				"          replacement_cost,",
+				"          rating,",
+				"          last_updated_date_ts = last_update,",
+				"          special_features,",
+				"          fulltext",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select1",
+				"rental select(mapColumn(",
+				"          rental_id,",
+				"          rental_date,",
+				"          inventory_id,",
+				"          customer_id,",
+				"          return_date,",
+				"          staff_id,",
+				"          last_update",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"payment select(mapColumn(",
+				"          payment_id,",
+				"          customer_id,",
+				"          staff_id,",
+				"          rental_id,",
+				"          amount,",
+				"          payment_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"inventory select(mapColumn(",
+				"          inventory_id,",
+				"          film_id,",
+				"          store_id,",
+				"          last_update",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select5",
+				"finalselect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: []) ~> customer",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2",
+				"select3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink3",
+				"select5 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink5"
+			]
+		}
+	}
+}

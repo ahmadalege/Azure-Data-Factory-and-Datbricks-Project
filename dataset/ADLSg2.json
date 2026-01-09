@@ -1,0 +1,22 @@
+{
+	"name": "ADLSg2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RebrickableADLSg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "customer",
+				"folderPath": "dvd_rentals/customer",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

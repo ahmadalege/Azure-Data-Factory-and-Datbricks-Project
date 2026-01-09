@@ -1,0 +1,6 @@
+{
+	"name": "PostgresIR",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

@@ -1,0 +1,50 @@
+{
+	"name": "rentalSilver",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RebrickableADLSg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "dvd_rentals/rental",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "rental_id",
+				"type": "INT32"
+			},
+			{
+				"name": "rental_date",
+				"type": "INT96"
+			},
+			{
+				"name": "inventory_id",
+				"type": "INT32"
+			},
+			{
+				"name": "customer_id",
+				"type": "INT32"
+			},
+			{
+				"name": "return_date",
+				"type": "INT96"
+			},
+			{
+				"name": "staff_id",
+				"type": "INT32"
+			},
+			{
+				"name": "last_update",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

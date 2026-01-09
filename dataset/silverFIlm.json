@@ -1,0 +1,78 @@
+{
+	"name": "silverFIlm",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RebrickableADLSg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "dvd_rentals/fiilm",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "film_id",
+				"type": "INT32"
+			},
+			{
+				"name": "title",
+				"type": "UTF8"
+			},
+			{
+				"name": "description",
+				"type": "UTF8"
+			},
+			{
+				"name": "release_year",
+				"type": "INT32"
+			},
+			{
+				"name": "language_id",
+				"type": "INT32"
+			},
+			{
+				"name": "rental_duration",
+				"type": "INT32"
+			},
+			{
+				"name": "rental_rate",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "length",
+				"type": "INT32"
+			},
+			{
+				"name": "replacement_cost",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "rating",
+				"type": "UTF8"
+			},
+			{
+				"name": "last_updated_date_ts",
+				"type": "INT96"
+			},
+			{
+				"name": "special_features",
+				"type": "UTF8"
+			},
+			{
+				"name": "fulltext",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

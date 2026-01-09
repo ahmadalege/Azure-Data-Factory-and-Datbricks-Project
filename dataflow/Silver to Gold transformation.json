@@ -1,0 +1,292 @@
+{
+	"name": "Silver to Gold transformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "silver_customer",
+						"type": "DatasetReference"
+					},
+					"name": "customersilver"
+				},
+				{
+					"dataset": {
+						"referenceName": "silverFIlm",
+						"type": "DatasetReference"
+					},
+					"name": "filmsilver"
+				},
+				{
+					"dataset": {
+						"referenceName": "inventorySilver",
+						"type": "DatasetReference"
+					},
+					"name": "inventorysilver"
+				},
+				{
+					"dataset": {
+						"referenceName": "rentalSilver",
+						"type": "DatasetReference"
+					},
+					"name": "rentalSilver"
+				},
+				{
+					"dataset": {
+						"referenceName": "paymentSilver",
+						"type": "DatasetReference"
+					},
+					"name": "paymentSilver"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dimCustomerGOld",
+						"type": "DatasetReference"
+					},
+					"name": "dimcustomer"
+				},
+				{
+					"dataset": {
+						"referenceName": "dimFimtoGold",
+						"type": "DatasetReference"
+					},
+					"name": "dimFilm"
+				},
+				{
+					"dataset": {
+						"referenceName": "factRentalsGold",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "filmInventoryJoin"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "paymentTableJoin"
+				},
+				{
+					"name": "inventoryTableJoin"
+				},
+				{
+					"name": "FilmTableJoin"
+				},
+				{
+					"name": "customerTableJoin"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "select4"
+				},
+				{
+					"name": "filter1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as integer,",
+				"          store_id as integer,",
+				"          first_name as string,",
+				"          last_name as string,",
+				"          email as string,",
+				"          address_id as integer,",
+				"          active as boolean,",
+				"          created_date_ts as timestamp,",
+				"          last_updated_date_ts as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> customersilver",
+				"source(output(",
+				"          film_id as integer,",
+				"          title as string,",
+				"          description as string,",
+				"          release_year as integer,",
+				"          language_id as integer,",
+				"          rental_duration as integer,",
+				"          rental_rate as decimal(38,18),",
+				"          length as integer,",
+				"          replacement_cost as decimal(38,18),",
+				"          rating as string,",
+				"          last_updated_date_ts as timestamp,",
+				"          special_features as string,",
+				"          fulltext as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> filmsilver",
+				"source(output(",
+				"          inventory_id as integer,",
+				"          film_id as integer,",
+				"          store_id as integer,",
+				"          last_update as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> inventorysilver",
+				"source(output(",
+				"          rental_id as integer,",
+				"          rental_date as timestamp,",
+				"          inventory_id as integer,",
+				"          customer_id as integer,",
+				"          return_date as timestamp,",
+				"          staff_id as integer,",
+				"          last_update as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> rentalSilver",
+				"source(output(",
+				"          payment_id as integer,",
+				"          customer_id as integer,",
+				"          staff_id as integer,",
+				"          rental_id as integer,",
+				"          amount as decimal(38,18),",
+				"          payment_date as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> paymentSilver",
+				"customersilver select(mapColumn(",
+				"          customer_id,",
+				"          first_name,",
+				"          last_name,",
+				"          email,",
+				"          active,",
+				"          created_date_ts,",
+				"          last_updated_date_ts",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"filmsilver, inventorysilver join(filmsilver@film_id == inventorysilver@film_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> filmInventoryJoin",
+				"derivedColumn1 select(mapColumn(",
+				"          film_id = filmsilver@film_id,",
+				"          title,",
+				"          description,",
+				"          release_year,",
+				"          language_id,",
+				"          rental_duration = rental_rate,",
+				"          rental_rate,",
+				"          length,",
+				"          replacement_cost,",
+				"          rating,",
+				"          last_updated_date_ts,",
+				"          store_id",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"filmInventoryJoin derive(replacement_cost = toDecimal(replacement_cost, 10, 2),",
+				"          rental_rate = toDecimal(rental_rate, 10, 2)) ~> derivedColumn1",
+				"rentalSilver, paymentSilver join(rentalSilver@rental_id == paymentSilver@rental_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> paymentTableJoin",
+				"select4, inventorysilver join(select4@inventory_id == inventorysilver@inventory_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> inventoryTableJoin",
+				"inventoryTableJoin, filmsilver join(inventorysilver@film_id == filmsilver@film_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> FilmTableJoin",
+				"FilmTableJoin, customersilver join(select4@customer_id == customersilver@customer_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> customerTableJoin",
+				"customerTableJoin derive(total_payment = toDecimal(amount, 10, 2),",
+				"          rental_duration_days = toInteger((return_date - rental_date) / 1000 / 60 / 60 / 24),",
+				"          rental_date_ts = rental_date,",
+				"          return_date_ts = return_date) ~> derivedColumn2",
+				"derivedColumn2 select(mapColumn(",
+				"          rental_id,",
+				"          customer_id = select4@customer_id,",
+				"          film_id = filmsilver@film_id,",
+				"          last_updated_date_ts = filmsilver@last_updated_date_ts,",
+				"          total_payment,",
+				"          rental_duration_days,",
+				"          rental_date_ts,",
+				"          return_date_ts",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"paymentTableJoin select(mapColumn(",
+				"          rental_id = rentalSilver@rental_id,",
+				"          rental_date,",
+				"          inventory_id,",
+				"          customer_id = rentalSilver@customer_id,",
+				"          return_date,",
+				"          last_update,",
+				"          payment_id,",
+				"          amount,",
+				"          payment_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select4",
+				"select3 filter(!isNull(rental_id)",
+				"&& !isNull(customer_id)",
+				"&& !isNull(film_id)",
+				"&& !isNull(rental_date_ts)",
+				"&& !isNull(total_payment)) ~> filter1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> dimcustomer",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> dimFilm",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
